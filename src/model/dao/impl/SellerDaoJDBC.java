@@ -57,24 +57,10 @@ public class SellerDaoJDBC implements SellerDao {
 			
 			rs = st.executeQuery();
 			
-			if (rs.next()){
-				
-				// Após execução da Query SQL, os dados são alocados num ResultSet.
-				// Os comandos abaixo instanciam um objeto e resgatam os dados do ResultSet gerado pela consulta.
-				//rs.getXXX -> resgate dos dados do ResultSet / xxx.setXXX() -> atribui os valor resgatados no objeto
-				Department dep = new Department(); 
-				dep.setId(rs.getInt("DepartmentId"));
-				dep.setName(rs.getString("DepName"));
-				
-				Seller obj = new Seller();
-				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("Name"));
-				obj.setEmail(rs.getString("Email"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setDeparment(dep);
-				
-				return obj;				
+			if (rs.next()){				
+				Department dep = instantiateDepartment(rs);				
+				Seller obj = instantiateSeller(rs, dep);
+				return obj;
 			}
 			return null;			
 		}
@@ -86,6 +72,30 @@ public class SellerDaoJDBC implements SellerDao {
 			DB.closeConnection();
 		}
 
+	}
+	
+	// Após execução da Query SQL, os dados são alocados num ResultSet.
+	// O método abaixo instancia um objeto e resgata os dados do ResultSet gerado pela consulta.
+	//rs.getXXX -> resgate dos dados do ResultSet / xxx.setXXX() -> atribui os valor resgatados no objeto
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department(); 
+		dep.setId(rs.getInt("DepartmentId"));
+		dep.setName(rs.getString("DepName"));
+		return dep;
+	}
+	
+	// Após execução da Query SQL, os dados são alocados num ResultSet.
+	// O método abaixo instancia um objeto e resgata os dados do ResultSet gerado pela consulta.
+	//rs.getXXX -> resgate dos dados do ResultSet / xxx.setXXX() -> atribui os valor resgatados no objeto	
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setEmail(rs.getString("Email"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setDeparment(dep);
+		return obj;
 	}
 
 	@Override
